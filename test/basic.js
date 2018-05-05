@@ -24,11 +24,6 @@ describe('request-debug', () => {
     lib.clearRequests();
   });
 
-  function maybeTransferEncodingChunked(obj) {
-    obj['transfer-encoding'] = 'chunked';
-    return obj;
-  }
-
   it('should capture a normal request', (done) => {
     request(`${lib.urls.http}/bottom`, (err) => {
       should.not.exist(err);
