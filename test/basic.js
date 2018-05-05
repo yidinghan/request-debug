@@ -57,6 +57,8 @@ describe('request-debug', () => {
             },
             statusCode: 200,
             body: 'Request OK',
+            times: undefined,
+            timingPhases: undefined,
           },
         },
       ]);
