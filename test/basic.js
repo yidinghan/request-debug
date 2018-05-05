@@ -14,9 +14,9 @@ describe('request-debug', () => {
 
     request = request.defaults({
       headers: {
-        host: 'localhost',
+        host: 'localhost'
       },
-      rejectUnauthorized: false,
+      rejectUnauthorized: false
     });
   });
 
@@ -40,9 +40,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: 'localhost',
-            },
-          },
+              host: 'localhost'
+            }
+          }
         },
         {
           response: {
@@ -53,14 +53,14 @@ describe('request-debug', () => {
               'content-type': 'text/html; charset=utf-8',
               date: '<date>',
               etag: 'W/"<etag>"',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
             statusCode: 200,
             body: 'Request OK',
             times: undefined,
-            timingPhases: undefined,
-          },
-        },
+            timingPhases: undefined
+          }
+        }
       ]);
       done();
     });
@@ -77,9 +77,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: 'localhost',
-            },
-          },
+              host: 'localhost'
+            }
+          }
         },
         {
           response: {
@@ -90,11 +90,11 @@ describe('request-debug', () => {
               'content-type': 'text/html; charset=utf-8',
               date: '<date>',
               etag: 'W/"<etag>"',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
-            statusCode: 200,
-          },
-        },
+            statusCode: 200
+          }
+        }
       ]);
       done();
     });
@@ -111,9 +111,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.http}/middle`,
             method: 'GET',
             headers: {
-              host: 'localhost',
-            },
-          },
+              host: 'localhost'
+            }
+          }
         },
         {
           redirect: {
@@ -125,11 +125,11 @@ describe('request-debug', () => {
               date: '<date>',
               location: '/bottom',
               vary: 'Accept',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
             statusCode: 302,
-            uri: `${lib.urls.http}/bottom`,
-          },
+            uri: `${lib.urls.http}/bottom`
+          }
         },
         {
           request: {
@@ -137,9 +137,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: `localhost:${lib.ports.http}`,
-            },
-          },
+              host: `localhost:${lib.ports.http}`
+            }
+          }
         },
         {
           response: {
@@ -150,14 +150,14 @@ describe('request-debug', () => {
               'content-type': 'text/html; charset=utf-8',
               date: '<date>',
               etag: 'W/"<etag>"',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
             statusCode: 200,
             body: 'Request OK',
             times: undefined,
-            timingPhases: undefined,
-          },
-        },
+            timingPhases: undefined
+          }
+        }
       ]);
       done();
     });
@@ -174,9 +174,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.https}/middle/http`,
             method: 'GET',
             headers: {
-              host: 'localhost',
-            },
-          },
+              host: 'localhost'
+            }
+          }
         },
         {
           redirect: {
@@ -188,11 +188,11 @@ describe('request-debug', () => {
               date: '<date>',
               location: `${lib.urls.http}/bottom`,
               vary: 'Accept',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
             statusCode: 302,
-            uri: `${lib.urls.http}/bottom`,
-          },
+            uri: `${lib.urls.http}/bottom`
+          }
         },
         {
           request: {
@@ -200,9 +200,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: `localhost:${lib.ports.http}`,
-            },
-          },
+              host: `localhost:${lib.ports.http}`
+            }
+          }
         },
         {
           response: {
@@ -213,14 +213,14 @@ describe('request-debug', () => {
               'content-type': 'text/html; charset=utf-8',
               date: '<date>',
               etag: 'W/"<etag>"',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
             statusCode: 200,
             body: 'Request OK',
             times: undefined,
-            timingPhases: undefined,
-          },
-        },
+            timingPhases: undefined
+          }
+        }
       ]);
       done();
     });
@@ -233,8 +233,8 @@ describe('request-debug', () => {
         auth: {
           user: 'admin',
           pass: 'mypass',
-          sendImmediately: false,
-        },
+          sendImmediately: false
+        }
       },
       (err) => {
         should.not.exist(err);
@@ -246,9 +246,9 @@ describe('request-debug', () => {
               uri: `${lib.urls.http}/auth/bottom`,
               method: 'GET',
               headers: {
-                host: 'localhost',
-              },
-            },
+                host: 'localhost'
+              }
+            }
           },
           {
             auth: {
@@ -258,11 +258,11 @@ describe('request-debug', () => {
                 date: '<date>',
                 'www-authenticate': 'Digest realm="Users" <+nonce,qop>',
                 'x-powered-by': 'Express',
-                'content-length': '12',
+                'content-length': '12'
               },
               statusCode: 401,
-              uri: `${lib.urls.http}/auth/bottom`,
-            },
+              uri: `${lib.urls.http}/auth/bottom`
+            }
           },
           {
             request: {
@@ -272,9 +272,9 @@ describe('request-debug', () => {
               headers: {
                 authorization:
                   'Digest username="admin" <+realm,nonce,uri,qop,response,nc,cnonce>',
-                host: 'localhost',
-              },
-            },
+                host: 'localhost'
+              }
+            }
           },
           {
             response: {
@@ -285,17 +285,17 @@ describe('request-debug', () => {
                 'content-type': 'text/html; charset=utf-8',
                 date: '<date>',
                 etag: 'W/"<etag>"',
-                'x-powered-by': 'Express',
+                'x-powered-by': 'Express'
               },
               statusCode: 200,
               body: 'Request OK',
               times: undefined,
-              timingPhases: undefined,
-            },
-          },
+              timingPhases: undefined
+            }
+          }
         ]);
         done();
-      },
+      }
     );
   });
 
@@ -306,8 +306,8 @@ describe('request-debug', () => {
         auth: {
           user: 'admin',
           pass: 'mypass',
-          sendImmediately: false,
-        },
+          sendImmediately: false
+        }
       },
       (err) => {
         should.not.exist(err);
@@ -319,9 +319,9 @@ describe('request-debug', () => {
               uri: `${lib.urls.https}/auth/top/http`,
               method: 'GET',
               headers: {
-                host: 'localhost',
-              },
-            },
+                host: 'localhost'
+              }
+            }
           },
           {
             auth: {
@@ -331,11 +331,11 @@ describe('request-debug', () => {
                 date: '<date>',
                 'content-length': '12',
                 'www-authenticate': 'Digest realm="Users" <+nonce,qop>',
-                'x-powered-by': 'Express',
+                'x-powered-by': 'Express'
               },
               statusCode: 401,
-              uri: `${lib.urls.https}/auth/top/http`,
-            },
+              uri: `${lib.urls.https}/auth/top/http`
+            }
           },
           {
             request: {
@@ -345,9 +345,9 @@ describe('request-debug', () => {
               headers: {
                 authorization:
                   'Digest username="admin" <+realm,nonce,uri,qop,response,nc,cnonce>',
-                host: 'localhost',
-              },
-            },
+                host: 'localhost'
+              }
+            }
           },
           {
             redirect: {
@@ -359,11 +359,11 @@ describe('request-debug', () => {
                 date: '<date>',
                 location: `${lib.urls.http}/middle`,
                 vary: 'Accept',
-                'x-powered-by': 'Express',
+                'x-powered-by': 'Express'
               },
               statusCode: 302,
-              uri: `${lib.urls.http}/middle`,
-            },
+              uri: `${lib.urls.http}/middle`
+            }
           },
           {
             request: {
@@ -373,9 +373,9 @@ describe('request-debug', () => {
               headers: {
                 authorization:
                   'Digest username="admin" <+realm,nonce,uri,qop,response,nc,cnonce>',
-                host: `localhost:${lib.ports.http}`,
-              },
-            },
+                host: `localhost:${lib.ports.http}`
+              }
+            }
           },
           {
             redirect: {
@@ -387,11 +387,11 @@ describe('request-debug', () => {
                 date: '<date>',
                 location: '/bottom',
                 vary: 'Accept',
-                'x-powered-by': 'Express',
+                'x-powered-by': 'Express'
               },
               statusCode: 302,
-              uri: `${lib.urls.http}/bottom`,
-            },
+              uri: `${lib.urls.http}/bottom`
+            }
           },
           {
             request: {
@@ -401,9 +401,9 @@ describe('request-debug', () => {
               headers: {
                 authorization:
                   'Digest username="admin" <+realm,nonce,uri,qop,response,nc,cnonce>',
-                host: `localhost:${lib.ports.http}`,
-              },
-            },
+                host: `localhost:${lib.ports.http}`
+              }
+            }
           },
           {
             response: {
@@ -414,17 +414,17 @@ describe('request-debug', () => {
                 'content-type': 'text/html; charset=utf-8',
                 date: '<date>',
                 etag: 'W/"<etag>"',
-                'x-powered-by': 'Express',
+                'x-powered-by': 'Express'
               },
               statusCode: 200,
               body: 'Request OK',
               times: undefined,
-              timingPhases: undefined,
-            },
-          },
+              timingPhases: undefined
+            }
+          }
         ]);
         done();
-      },
+      }
     );
   });
 
@@ -434,8 +434,8 @@ describe('request-debug', () => {
         uri: `${lib.urls.http}/bottom`,
         method: 'POST',
         form: {
-          formKey: 'formData',
-        },
+          formKey: 'formData'
+        }
       },
       (err) => {
         should.not.exist(err);
@@ -449,10 +449,10 @@ describe('request-debug', () => {
               headers: {
                 host: 'localhost',
                 'content-length': 16,
-                'content-type': '<application/x-www-form-urlencoded>',
+                'content-type': '<application/x-www-form-urlencoded>'
               },
-              body: 'formKey=formData',
-            },
+              body: 'formKey=formData'
+            }
           },
           {
             response: {
@@ -464,18 +464,18 @@ describe('request-debug', () => {
                 date: '<date>',
                 'x-powered-by': 'Express',
                 'content-security-policy': "default-src 'self'",
-                'x-content-type-options': 'nosniff',
+                'x-content-type-options': 'nosniff'
               },
               statusCode: 404,
               body:
                 '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /bottom</pre>\n</body>\n</html>\n',
               times: undefined,
-              timingPhases: undefined,
-            },
-          },
+              timingPhases: undefined
+            }
+          }
         ]);
         done();
-      },
+      }
     );
   });
 
@@ -483,7 +483,7 @@ describe('request-debug', () => {
     request(
       {
         uri: `${lib.urls.http}/bottom`,
-        json: true,
+        json: true
       },
       (err) => {
         should.not.exist(err);
@@ -496,9 +496,9 @@ describe('request-debug', () => {
               method: 'GET',
               headers: {
                 accept: 'application/json',
-                host: 'localhost',
-              },
-            },
+                host: 'localhost'
+              }
+            }
           },
           {
             response: {
@@ -509,19 +509,19 @@ describe('request-debug', () => {
                 'content-type': 'application/json; charset=utf-8',
                 date: '<date>',
                 etag: 'W/"<etag>"',
-                'x-powered-by': 'Express',
+                'x-powered-by': 'Express'
               },
               statusCode: 200,
               body: {
-                key: 'value',
+                key: 'value'
               },
               times: undefined,
-              timingPhases: undefined,
-            },
-          },
+              timingPhases: undefined
+            }
+          }
         ]);
         done();
-      },
+      }
     );
   });
 
@@ -532,8 +532,8 @@ describe('request-debug', () => {
 
     request = Request.defaults({
       headers: {
-        host: 'localhost',
-      },
+        host: 'localhost'
+      }
     });
 
     lib.enableDebugging(request);
@@ -548,9 +548,9 @@ describe('request-debug', () => {
             uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: 'localhost',
-            },
-          },
+              host: 'localhost'
+            }
+          }
         },
         {
           response: {
@@ -561,14 +561,14 @@ describe('request-debug', () => {
               'content-type': 'text/html; charset=utf-8',
               date: '<date>',
               etag: 'W/"<etag>"',
-              'x-powered-by': 'Express',
+              'x-powered-by': 'Express'
             },
             statusCode: 200,
             body: 'Request OK',
             times: undefined,
-            timingPhases: undefined,
-          },
-        },
+            timingPhases: undefined
+          }
+        }
       ]);
       done();
     });
