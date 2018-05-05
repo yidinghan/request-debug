@@ -16,8 +16,8 @@ const c = {
   debugId: 0,
   ports: {
     http: 8480,
-    https: 8443,
-  },
+    https: 8443
+  }
 };
 
 Object.keys(c.ports).forEach((port) => {
@@ -60,7 +60,7 @@ const fixHeader = {
         arr
           .slice(1)
           .map(v => v.split('=')[0])
-          .join(','),
+          .join(',')
       );
     }
     return val;
@@ -71,12 +71,12 @@ const fixHeader = {
   'content-type': function (val) {
     return val.replace(
       /^application\/x-www-form-urlencoded(; charset=utf-8)?$/,
-      '<application/x-www-form-urlencoded>',
+      '<application/x-www-form-urlencoded>'
     );
   },
   'content-length': function (val) {
     return val;
-  },
+  }
 };
 fixHeader['www-authenticate'] = fixHeader.authorization;
 
@@ -133,9 +133,9 @@ c.startServers = function () {
     .createServer(
       {
         key: fs.readFileSync(path.join(__dirname, 'key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
+        cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
       },
-      app,
+      app
     )
     .listen(c.ports.https);
 };
