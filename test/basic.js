@@ -120,7 +120,7 @@ describe('request-debug', () => {
             debugId: lib.debugId,
             headers: {
               connection: '<close or keep-alive>',
-              'content-length': '41',
+              'content-length': '29',
               'content-type': 'text/plain; charset=utf-8',
               date: '<date>',
               location: '/bottom',
@@ -183,7 +183,7 @@ describe('request-debug', () => {
             debugId: lib.debugId,
             headers: {
               connection: '<close or keep-alive>',
-              'content-length': '62',
+              'content-length': '50',
               'content-type': 'text/plain; charset=utf-8',
               date: '<date>',
               location: `${lib.urls.http}/bottom`,
@@ -253,12 +253,13 @@ describe('request-debug', () => {
           {
             auth: {
               debugId: lib.debugId,
-              headers: maybeTransferEncodingChunked({
+              headers: {
                 connection: '<close or keep-alive>',
                 date: '<date>',
                 'www-authenticate': 'Digest realm="Users" <+nonce,qop>',
                 'x-powered-by': 'Express',
-              }),
+                'content-length': '12',
+              },
               statusCode: 401,
               uri: `${lib.urls.http}/auth/bottom`,
             },
@@ -325,12 +326,13 @@ describe('request-debug', () => {
           {
             auth: {
               debugId: lib.debugId,
-              headers: maybeTransferEncodingChunked({
+              headers: {
                 connection: '<close or keep-alive>',
                 date: '<date>',
+                'content-length': '12',
                 'www-authenticate': 'Digest realm="Users" <+nonce,qop>',
                 'x-powered-by': 'Express',
-              }),
+              },
               statusCode: 401,
               uri: `${lib.urls.https}/auth/top/http`,
             },
@@ -352,7 +354,7 @@ describe('request-debug', () => {
               debugId: lib.debugId,
               headers: {
                 connection: '<close or keep-alive>',
-                'content-length': '62',
+                'content-length': '50',
                 'content-type': 'text/plain; charset=utf-8',
                 date: '<date>',
                 location: `${lib.urls.http}/middle`,
@@ -380,7 +382,7 @@ describe('request-debug', () => {
               debugId: lib.debugId,
               headers: {
                 connection: '<close or keep-alive>',
-                'content-length': '41',
+                'content-length': '29',
                 'content-type': 'text/plain; charset=utf-8',
                 date: '<date>',
                 location: '/bottom',
