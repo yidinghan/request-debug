@@ -9,33 +9,36 @@ const util = require('util');
 const debug = require('../..');
 
 let app;
-const ports = {
-  http: 8480,
-  https: 8443,
+
+const c = {
+  requests: [],
+  urls: {},
+  debugId: 0,
+  ports: {
+    http: 8480,
+    https: 8443,
+  },
 };
 
-let requests = [];
-const urls = {};
-Object.keys(ports).forEach((port) => {
-  urls[port] = util.format('%s://localhost:%d', port, ports[port]);
+Object.keys(c.ports).forEach((port) => {
+  c.urls[port] = util.format('%s://localhost:%d', port, c.ports[port]);
 });
-let debugId = 0;
 
 const enableDebugging = function (request) {
   // enable debugging
   debug(request, (type, data, r) => {
     const obj = {};
     obj[type] = data;
-    requests.push(obj);
+    c.requests.push(obj);
     if (typeof r._initBeforeDebug !== 'function') {
       throw new Error('Expected a Request instance here.');
     }
   });
 };
 
-exports.clearRequests = function () {
-  requests = [];
-  debugId++;
+c.clearRequests = function () {
+  c.requests = [];
+  c.debugId++;
 };
 
 const fixHeader = {
@@ -77,8 +80,8 @@ const fixHeader = {
 };
 fixHeader['www-authenticate'] = fixHeader.authorization;
 
-exports.fixVariableHeaders = function () {
-  requests.forEach((req) => {
+c.fixVariableHeaders = function () {
+  c.requests.forEach((req) => {
     Object.keys(req).forEach((type) => {
       Object.keys(req[type].headers).forEach((header) => {
         if (fixHeader[header]) {
@@ -94,7 +97,7 @@ exports.fixVariableHeaders = function () {
   });
 };
 
-exports.startServers = function () {
+c.startServers = function () {
   passport.use(new DigestStrategy({ qop: 'auth' }, (user, done) =>
     done(null, 'admin', 'mypass')));
 
@@ -113,7 +116,7 @@ exports.startServers = function () {
     }
     const level = req.params.level === 'top' ? 'middle' : 'bottom';
     if (req.params.proto && req.params.proto !== req.protocol) {
-      res.redirect(`${urls[req.params.proto]}/${level}`);
+      res.redirect(`${c.urls[req.params.proto]}/${level}`);
     } else {
       res.redirect(`/${level}`);
     }
@@ -124,7 +127,7 @@ exports.startServers = function () {
 
   app.get('/:level/:proto?', handleRequest);
 
-  http.createServer(app).listen(ports.http);
+  http.createServer(app).listen(c.ports.http);
 
   https
     .createServer(
@@ -134,11 +137,9 @@ exports.startServers = function () {
       },
       app,
     )
-    .listen(ports.https);
+    .listen(c.ports.https);
 };
 
-exports.ports = ports;
-exports.requests = requests;
-exports.urls = urls;
-exports.debugId = debugId;
-exports.enableDebugging = enableDebugging;
+c.enableDebugging = enableDebugging;
+
+module.exports = c;

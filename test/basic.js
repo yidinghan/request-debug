@@ -1,4 +1,3 @@
-const engine = require('detect-engine');
 const lib = require('./lib');
 require('mocha');
 let request = require('request');
@@ -26,10 +25,7 @@ describe('request-debug', () => {
   });
 
   function maybeTransferEncodingChunked(obj) {
-    if (engine === 'node') {
-      // Node sends 'Transfer-Encoding: chunked' here, io.js does not
-      obj['transfer-encoding'] = 'chunked';
-    }
+    obj['transfer-encoding'] = 'chunked';
     return obj;
   }
 

@@ -19,7 +19,7 @@
     "headers"
   ],
   "scripts": {
-    "test": "node node_modules/.bin/mocha"
+    "test": "mocha"
   },
   "main": "index.js",
   "devDependencies": {
