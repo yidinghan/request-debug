@@ -16,11 +16,7 @@ var ports = {
   https: 8443,
 };
 
-var requests = [];
-exports.ports = ports;
-exports.urls = {};
-exports.debugId = 0;
-
+let requests = [];
 for (var proto in ports) {
   exports.urls[proto] = util.format('%s://localhost:%d', proto, ports[proto]);
 }
@@ -150,3 +146,8 @@ exports.startServers = function() {
     )
     .listen(ports.https);
 };
+
+exports.ports = ports;
+exports.requests = requests;
+exports.urls = {};
+exports.debugId = 0;
