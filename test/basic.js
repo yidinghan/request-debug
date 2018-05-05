@@ -2,6 +2,7 @@ const engine = require('detect-engine');
 const lib = require('./lib');
 require('mocha');
 let request = require('request');
+const Request = require('request');
 const should = require('should');
 
 describe('request-debug', () => {
@@ -24,7 +25,7 @@ describe('request-debug', () => {
   });
 
   function maybeTransferEncodingChunked(obj) {
-    if (engine == 'node') {
+    if (engine === 'node') {
       // Node sends 'Transfer-Encoding: chunked' here, io.js does not
       obj['transfer-encoding'] = 'chunked';
     }
@@ -32,7 +33,7 @@ describe('request-debug', () => {
   }
 
   it('should capture a normal request', (done) => {
-    request(`${lib.urls.http}/bottom`, (err, res, body) => {
+    request(`${lib.urls.http}/bottom`, (err) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
@@ -68,7 +69,7 @@ describe('request-debug', () => {
 
   it('should capture a request with no callback', (done) => {
     const r = request(`${lib.urls.http}/bottom`);
-    r.on('complete', (res) => {
+    r.on('complete', () => {
       lib.fixVariableHeaders();
       lib.requests.should.eql([
         {
@@ -101,7 +102,7 @@ describe('request-debug', () => {
   });
 
   it('should capture a redirect', (done) => {
-    request(`${lib.urls.http}/middle`, (err, res, body) => {
+    request(`${lib.urls.http}/middle`, (err) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
@@ -162,7 +163,7 @@ describe('request-debug', () => {
   });
 
   it('should capture a cross-protocol redirect', (done) => {
-    request(`${lib.urls.https}/middle/http`, (err, res, body) => {
+    request(`${lib.urls.https}/middle/http`, (err) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
@@ -232,7 +233,7 @@ describe('request-debug', () => {
           sendImmediately: false,
         },
       },
-      (err, res, body) => {
+      (err) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
@@ -302,7 +303,7 @@ describe('request-debug', () => {
           sendImmediately: false,
         },
       },
-      (err, res, body) => {
+      (err) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
@@ -427,7 +428,7 @@ describe('request-debug', () => {
           formKey: 'formData',
         },
       },
-      (err, res, body) => {
+      (err) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
@@ -470,7 +471,7 @@ describe('request-debug', () => {
         uri: `${lib.urls.http}/bottom`,
         json: true,
       },
-      (err, res, body) => {
+      (err) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
@@ -513,7 +514,7 @@ describe('request-debug', () => {
     proto.init = proto._initBeforeDebug;
     delete proto._initBeforeDebug;
 
-    request = require('request').defaults({
+    request = Request.defaults({
       headers: {
         host: 'localhost',
       },
@@ -521,7 +522,7 @@ describe('request-debug', () => {
 
     lib.enableDebugging(request);
 
-    request(`${lib.urls.http}/bottom`, (err, res, body) => {
+    request(`${lib.urls.http}/bottom`, (err) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
@@ -557,7 +558,7 @@ describe('request-debug', () => {
 
   it('should not capture anything after stopDebugging()', (done) => {
     request.stopDebugging();
-    request(`${lib.urls.http}/bottom`, (err, res, body) => {
+    request(`${lib.urls.http}/bottom`, (err) => {
       should.not.exist(err);
       lib.requests.should.eql([]);
       done();
