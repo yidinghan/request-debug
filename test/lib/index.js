@@ -1,95 +1,92 @@
-var engine = require('detect-engine');
-var express = require('express');
-var fs = require('fs');
-var http = require('http');
-var https = require('https');
-var mocha = require('mocha');
-var passport = require('passport');
-var DigestStrategy = require('passport-http').DigestStrategy;
-var path = require('path');
-var should = require('should');
-var util = require('util');
+const engine = require('detect-engine');
+const express = require('express');
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const mocha = require('mocha');
+const passport = require('passport');
+const DigestStrategy = require('passport-http').DigestStrategy;
+const path = require('path');
+const should = require('should');
+const util = require('util');
 
-var app;
-var ports = {
+let app;
+const ports = {
   http: 8480,
   https: 8443,
 };
 
 let requests = [];
-for (var proto in ports) {
+for (const proto in ports) {
   exports.urls[proto] = util.format('%s://localhost:%d', proto, ports[proto]);
 }
 
-exports.enableDebugging = function(request) {
+const enableDebugging = function (request) {
   // enable debugging
-  require('../..')(request, function(type, data, r) {
-    var obj = {};
+  require('../..')(request, (type, data, r) => {
+    const obj = {};
     obj[type] = data;
     requests.push(obj);
-    if (typeof r._initBeforeDebug != 'function') {
+    if (typeof r._initBeforeDebug !== 'function') {
       throw new Error('Expected a Request instance here.');
     }
   });
 };
 
-exports.clearRequests = function() {
+exports.clearRequests = function () {
   requests = [];
   exports.debugId++;
 };
 
-var fixHeader = {
-  date: function(val) {
+const fixHeader = {
+  date(val) {
     return '<date>';
   },
-  etag: function(val) {
-    return val.split('"')[0] + '"<etag>"';
+  etag(val) {
+    return `${val.split('"')[0]}"<etag>"`;
   },
-  connection: function(val) {
+  connection(val) {
     return val.replace(/^(close|keep-alive)$/, '<close or keep-alive>');
   },
-  authorization: function(val) {
-    var arr = val.split(', ');
+  authorization(val) {
+    const arr = val.split(', ');
     if (arr.length > 1) {
       val = util.format(
         '%s <+%s>',
         arr[0],
         arr
           .slice(1)
-          .map(function(v) {
-            return v.split('=')[0];
-          })
-          .join(',')
+          .map(v => v.split('=')[0])
+          .join(','),
       );
     }
     return val;
   },
-  referer: function(val) {
+  referer(val) {
     return null;
   },
-  'content-type': function(val) {
+  'content-type': function (val) {
     return val.replace(
       /^application\/x-www-form-urlencoded(; charset=utf-8)?$/,
-      '<application/x-www-form-urlencoded>'
+      '<application/x-www-form-urlencoded>',
     );
   },
-  'content-length': function(val, obj) {
+  'content-length': function (val, obj) {
     if (engine == 'iojs' && obj.statusCode == 401) {
       // io.js sends content-length here, Node does not
       return null;
-    } else {
-      return val;
     }
+    return val;
   },
 };
 fixHeader['www-authenticate'] = fixHeader.authorization;
 
-exports.fixVariableHeaders = function() {
-  requests.forEach(function(req) {
-    for (var type in req) {
-      for (var header in req[type].headers) {
+exports.fixVariableHeaders = function () {
+  requests.forEach((req) => {
+    for (const type in req) {
+      for (const header in req[type].headers) {
         if (fixHeader[header]) {
-          var fixed = fixHeader[header](req[type].headers[header], req[type]);
+          const fixed = fixHeader[header](req[type].headers[header], req[type]);
           if (fixed === null) {
             delete req[type].headers[header];
           } else {
@@ -101,12 +98,9 @@ exports.fixVariableHeaders = function() {
   });
 };
 
-exports.startServers = function() {
-  passport.use(
-    new DigestStrategy({ qop: 'auth' }, function(user, done) {
-      return done(null, 'admin', 'mypass');
-    })
-  );
+exports.startServers = function () {
+  passport.use(new DigestStrategy({ qop: 'auth' }, (user, done) =>
+    done(null, 'admin', 'mypass')));
 
   app = express();
 
@@ -121,15 +115,15 @@ exports.startServers = function() {
       }
       return;
     }
-    var level = req.params.level == 'top' ? 'middle' : 'bottom';
+    const level = req.params.level == 'top' ? 'middle' : 'bottom';
     if (req.params.proto && req.params.proto != req.protocol) {
-      res.redirect(exports.urls[req.params.proto] + '/' + level);
+      res.redirect(`${exports.urls[req.params.proto]}/${level}`);
     } else {
-      res.redirect('/' + level);
+      res.redirect(`/${level}`);
     }
   }
 
-  var auth = passport.authenticate('digest', { session: false });
+  const auth = passport.authenticate('digest', { session: false });
   app.get('/auth/:level/:proto?', auth, handleRequest);
 
   app.get('/:level/:proto?', handleRequest);
@@ -142,7 +136,7 @@ exports.startServers = function() {
         key: fs.readFileSync(path.join(__dirname, 'key.pem')),
         cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
       },
-      app
+      app,
     )
     .listen(ports.https);
 };
@@ -151,3 +145,4 @@ exports.ports = ports;
 exports.requests = requests;
 exports.urls = {};
 exports.debugId = 0;
+exports.enableDebugging = enableDebugging;

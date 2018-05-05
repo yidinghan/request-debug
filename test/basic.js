@@ -1,13 +1,13 @@
-var engine = require('detect-engine');
-var lib = require('./lib');
-var mocha = require('mocha');
-var request = require('request');
-var should = require('should');
+const engine = require('detect-engine');
+const lib = require('./lib');
+require('mocha');
+let request = require('request');
+const should = require('should');
 
-describe('request-debug', function() {
-  var proto = request.Request.prototype;
+describe('request-debug', () => {
+  const proto = request.Request.prototype;
 
-  before(function() {
+  before(() => {
     lib.enableDebugging(request);
     lib.startServers();
 
@@ -19,7 +19,7 @@ describe('request-debug', function() {
     });
   });
 
-  beforeEach(function() {
+  beforeEach(() => {
     lib.clearRequests();
   });
 
@@ -31,15 +31,15 @@ describe('request-debug', function() {
     return obj;
   }
 
-  it('should capture a normal request', function(done) {
-    request(lib.urls.http + '/bottom', function(err, res, body) {
+  it('should capture a normal request', (done) => {
+    request(`${lib.urls.http}/bottom`, (err, res, body) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
               host: 'localhost',
@@ -66,15 +66,15 @@ describe('request-debug', function() {
     });
   });
 
-  it('should capture a request with no callback', function(done) {
-    var r = request(lib.urls.http + '/bottom');
-    r.on('complete', function(res) {
+  it('should capture a request with no callback', (done) => {
+    const r = request(`${lib.urls.http}/bottom`);
+    r.on('complete', (res) => {
       lib.fixVariableHeaders();
       lib.requests.should.eql([
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
               host: 'localhost',
@@ -100,15 +100,15 @@ describe('request-debug', function() {
     });
   });
 
-  it('should capture a redirect', function(done) {
-    request(lib.urls.http + '/middle', function(err, res, body) {
+  it('should capture a redirect', (done) => {
+    request(`${lib.urls.http}/middle`, (err, res, body) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.http + '/middle',
+            uri: `${lib.urls.http}/middle`,
             method: 'GET',
             headers: {
               host: 'localhost',
@@ -128,16 +128,16 @@ describe('request-debug', function() {
               'x-powered-by': 'Express',
             },
             statusCode: 302,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
           },
         },
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: 'localhost:' + lib.ports.http,
+              host: `localhost:${lib.ports.http}`,
             },
           },
         },
@@ -161,15 +161,15 @@ describe('request-debug', function() {
     });
   });
 
-  it('should capture a cross-protocol redirect', function(done) {
-    request(lib.urls.https + '/middle/http', function(err, res, body) {
+  it('should capture a cross-protocol redirect', (done) => {
+    request(`${lib.urls.https}/middle/http`, (err, res, body) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.https + '/middle/http',
+            uri: `${lib.urls.https}/middle/http`,
             method: 'GET',
             headers: {
               host: 'localhost',
@@ -184,21 +184,21 @@ describe('request-debug', function() {
               'content-length': '62',
               'content-type': 'text/plain; charset=utf-8',
               date: '<date>',
-              location: lib.urls.http + '/bottom',
+              location: `${lib.urls.http}/bottom`,
               vary: 'Accept',
               'x-powered-by': 'Express',
             },
             statusCode: 302,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
           },
         },
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
-              host: 'localhost:' + lib.ports.http,
+              host: `localhost:${lib.ports.http}`,
             },
           },
         },
@@ -222,9 +222,9 @@ describe('request-debug', function() {
     });
   });
 
-  it('should capture an auth challenge', function(done) {
+  it('should capture an auth challenge', (done) => {
     request(
-      lib.urls.http + '/auth/bottom',
+      `${lib.urls.http}/auth/bottom`,
       {
         auth: {
           user: 'admin',
@@ -232,14 +232,14 @@ describe('request-debug', function() {
           sendImmediately: false,
         },
       },
-      function(err, res, body) {
+      (err, res, body) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.http + '/auth/bottom',
+              uri: `${lib.urls.http}/auth/bottom`,
               method: 'GET',
               headers: {
                 host: 'localhost',
@@ -256,13 +256,13 @@ describe('request-debug', function() {
                 'x-powered-by': 'Express',
               }),
               statusCode: 401,
-              uri: lib.urls.http + '/auth/bottom',
+              uri: `${lib.urls.http}/auth/bottom`,
             },
           },
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.http + '/auth/bottom',
+              uri: `${lib.urls.http}/auth/bottom`,
               method: 'GET',
               headers: {
                 authorization:
@@ -288,13 +288,13 @@ describe('request-debug', function() {
           },
         ]);
         done();
-      }
+      },
     );
   });
 
-  it('should capture a complicated redirect', function(done) {
+  it('should capture a complicated redirect', (done) => {
     request(
-      lib.urls.https + '/auth/top/http',
+      `${lib.urls.https}/auth/top/http`,
       {
         auth: {
           user: 'admin',
@@ -302,14 +302,14 @@ describe('request-debug', function() {
           sendImmediately: false,
         },
       },
-      function(err, res, body) {
+      (err, res, body) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.https + '/auth/top/http',
+              uri: `${lib.urls.https}/auth/top/http`,
               method: 'GET',
               headers: {
                 host: 'localhost',
@@ -326,13 +326,13 @@ describe('request-debug', function() {
                 'x-powered-by': 'Express',
               }),
               statusCode: 401,
-              uri: lib.urls.https + '/auth/top/http',
+              uri: `${lib.urls.https}/auth/top/http`,
             },
           },
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.https + '/auth/top/http',
+              uri: `${lib.urls.https}/auth/top/http`,
               method: 'GET',
               headers: {
                 authorization:
@@ -349,23 +349,23 @@ describe('request-debug', function() {
                 'content-length': '62',
                 'content-type': 'text/plain; charset=utf-8',
                 date: '<date>',
-                location: lib.urls.http + '/middle',
+                location: `${lib.urls.http}/middle`,
                 vary: 'Accept',
                 'x-powered-by': 'Express',
               },
               statusCode: 302,
-              uri: lib.urls.http + '/middle',
+              uri: `${lib.urls.http}/middle`,
             },
           },
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.http + '/middle',
+              uri: `${lib.urls.http}/middle`,
               method: 'GET',
               headers: {
                 authorization:
                   'Digest username="admin" <+realm,nonce,uri,qop,response,nc,cnonce>',
-                host: 'localhost:' + lib.ports.http,
+                host: `localhost:${lib.ports.http}`,
               },
             },
           },
@@ -382,18 +382,18 @@ describe('request-debug', function() {
                 'x-powered-by': 'Express',
               },
               statusCode: 302,
-              uri: lib.urls.http + '/bottom',
+              uri: `${lib.urls.http}/bottom`,
             },
           },
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.http + '/bottom',
+              uri: `${lib.urls.http}/bottom`,
               method: 'GET',
               headers: {
                 authorization:
                   'Digest username="admin" <+realm,nonce,uri,qop,response,nc,cnonce>',
-                host: 'localhost:' + lib.ports.http,
+                host: `localhost:${lib.ports.http}`,
               },
             },
           },
@@ -414,27 +414,27 @@ describe('request-debug', function() {
           },
         ]);
         done();
-      }
+      },
     );
   });
 
-  it('should capture POST data and 404 responses', function(done) {
+  it('should capture POST data and 404 responses', (done) => {
     request(
       {
-        uri: lib.urls.http + '/bottom',
+        uri: `${lib.urls.http}/bottom`,
         method: 'POST',
         form: {
           formKey: 'formData',
         },
       },
-      function(err, res, body) {
+      (err, res, body) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.http + '/bottom',
+              uri: `${lib.urls.http}/bottom`,
               method: 'POST',
               headers: {
                 host: 'localhost',
@@ -460,24 +460,24 @@ describe('request-debug', function() {
           },
         ]);
         done();
-      }
+      },
     );
   });
 
-  it('should capture JSON responses', function(done) {
+  it('should capture JSON responses', (done) => {
     request(
       {
-        uri: lib.urls.http + '/bottom',
+        uri: `${lib.urls.http}/bottom`,
         json: true,
       },
-      function(err, res, body) {
+      (err, res, body) => {
         should.not.exist(err);
         lib.fixVariableHeaders();
         lib.requests.should.eql([
           {
             request: {
               debugId: lib.debugId,
-              uri: lib.urls.http + '/bottom',
+              uri: `${lib.urls.http}/bottom`,
               method: 'GET',
               headers: {
                 accept: 'application/json',
@@ -504,11 +504,11 @@ describe('request-debug', function() {
           },
         ]);
         done();
-      }
+      },
     );
   });
 
-  it('should work with the result of request.defaults()', function(done) {
+  it('should work with the result of request.defaults()', (done) => {
     proto.should.have.property('_initBeforeDebug');
     proto.init = proto._initBeforeDebug;
     delete proto._initBeforeDebug;
@@ -521,14 +521,14 @@ describe('request-debug', function() {
 
     lib.enableDebugging(request);
 
-    request(lib.urls.http + '/bottom', function(err, res, body) {
+    request(`${lib.urls.http}/bottom`, (err, res, body) => {
       should.not.exist(err);
       lib.fixVariableHeaders();
       lib.requests.should.eql([
         {
           request: {
             debugId: lib.debugId,
-            uri: lib.urls.http + '/bottom',
+            uri: `${lib.urls.http}/bottom`,
             method: 'GET',
             headers: {
               host: 'localhost',
@@ -555,9 +555,9 @@ describe('request-debug', function() {
     });
   });
 
-  it('should not capture anything after stopDebugging()', function(done) {
+  it('should not capture anything after stopDebugging()', (done) => {
     request.stopDebugging();
-    request(lib.urls.http + '/bottom', function(err, res, body) {
+    request(`${lib.urls.http}/bottom`, (err, res, body) => {
       should.not.exist(err);
       lib.requests.should.eql([]);
       done();
