@@ -6,6 +6,7 @@ const Request = require('request');
 const should = require('should');
 
 describe('request-debug', () => {
+  // @ts-ignore
   const proto = request.Request.prototype;
 
   before(() => {
@@ -557,6 +558,7 @@ describe('request-debug', () => {
   });
 
   it('should not capture anything after stopDebugging()', (done) => {
+    // @ts-ignore
     request.stopDebugging();
     request(`${lib.urls.http}/bottom`, (err) => {
       should.not.exist(err);
