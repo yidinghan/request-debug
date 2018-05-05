@@ -459,13 +459,16 @@ describe('request-debug', () => {
               debugId: lib.debugId,
               headers: {
                 connection: '<close or keep-alive>',
-                'content-length': '20',
+                'content-length': '146',
                 'content-type': 'text/html; charset=utf-8',
                 date: '<date>',
                 'x-powered-by': 'Express',
+                'content-security-policy': "default-src 'self'",
+                'x-content-type-options': 'nosniff',
               },
               statusCode: 404,
-              body: 'Cannot POST /bottom\n',
+              body:
+                '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot POST /bottom</pre>\n</body>\n</html>\n',
               times: undefined,
               timingPhases: undefined,
             },
