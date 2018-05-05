@@ -83,6 +83,8 @@ describe('request-debug', () => {
         },
         {
           response: {
+            times: undefined,
+            timingPhases: undefined,
             debugId: lib.debugId,
             headers: {
               connection: '<close or keep-alive>',
@@ -154,6 +156,8 @@ describe('request-debug', () => {
             },
             statusCode: 200,
             body: 'Request OK',
+            times: undefined,
+            timingPhases: undefined,
           },
         },
       ]);
@@ -215,6 +219,8 @@ describe('request-debug', () => {
             },
             statusCode: 200,
             body: 'Request OK',
+            times: undefined,
+            timingPhases: undefined,
           },
         },
       ]);
@@ -284,6 +290,8 @@ describe('request-debug', () => {
               },
               statusCode: 200,
               body: 'Request OK',
+              times: undefined,
+              timingPhases: undefined,
             },
           },
         ]);
@@ -410,6 +418,8 @@ describe('request-debug', () => {
               },
               statusCode: 200,
               body: 'Request OK',
+              times: undefined,
+              timingPhases: undefined,
             },
           },
         ]);
@@ -456,6 +466,8 @@ describe('request-debug', () => {
               },
               statusCode: 404,
               body: 'Cannot POST /bottom\n',
+              times: undefined,
+              timingPhases: undefined,
             },
           },
         ]);
@@ -500,6 +512,8 @@ describe('request-debug', () => {
               body: {
                 key: 'value',
               },
+              times: undefined,
+              timingPhases: undefined,
             },
           },
         ]);
@@ -548,6 +562,8 @@ describe('request-debug', () => {
             },
             statusCode: 200,
             body: 'Request OK',
+            times: undefined,
+            timingPhases: undefined,
           },
         },
       ]);
