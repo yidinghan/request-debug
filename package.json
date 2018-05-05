@@ -36,7 +36,5 @@
     "request": "~2.50.0",
     "should": "~4.0.4"
   },
-  "dependencies": {
-    "stringify-clone": "^1.0.0"
-  }
+  "dependencies": {}
 }
