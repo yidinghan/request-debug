@@ -24,6 +24,12 @@ describe('request-debug', () => {
     lib.clearRequests();
   });
 
+  after(() => {
+    setTimeout(() => {
+      process.exit(0);
+    }, 1);
+  });
+
   it('should capture a normal request', (done) => {
     request(`${lib.urls.http}/bottom`, (err) => {
       should.not.exist(err);
