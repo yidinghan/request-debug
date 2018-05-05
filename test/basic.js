@@ -83,8 +83,6 @@ describe('request-debug', () => {
         },
         {
           response: {
-            times: undefined,
-            timingPhases: undefined,
             debugId: lib.debugId,
             headers: {
               connection: '<close or keep-alive>',
