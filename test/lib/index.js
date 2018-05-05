@@ -1,14 +1,12 @@
-const engine = require('detect-engine');
 const express = require('express');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
-const mocha = require('mocha');
 const passport = require('passport');
 const DigestStrategy = require('passport-http').DigestStrategy;
 const path = require('path');
-const should = require('should');
 const util = require('util');
+const debug = require('../..');
 
 let app;
 const ports = {
@@ -17,13 +15,15 @@ const ports = {
 };
 
 let requests = [];
-for (const proto in ports) {
-  exports.urls[proto] = util.format('%s://localhost:%d', proto, ports[proto]);
-}
+const urls = {};
+Object.keys(ports).forEach((port) => {
+  urls[port] = util.format('%s://localhost:%d', port, ports[port]);
+});
+let debugId = 0;
 
 const enableDebugging = function (request) {
   // enable debugging
-  require('../..')(request, (type, data, r) => {
+  debug(request, (type, data, r) => {
     const obj = {};
     obj[type] = data;
     requests.push(obj);
@@ -35,11 +35,11 @@ const enableDebugging = function (request) {
 
 exports.clearRequests = function () {
   requests = [];
-  exports.debugId++;
+  debugId++;
 };
 
 const fixHeader = {
-  date(val) {
+  date() {
     return '<date>';
   },
   etag(val) {
@@ -62,7 +62,7 @@ const fixHeader = {
     }
     return val;
   },
-  referer(val) {
+  referer() {
     return null;
   },
   'content-type': function (val) {
@@ -71,11 +71,7 @@ const fixHeader = {
       '<application/x-www-form-urlencoded>',
     );
   },
-  'content-length': function (val, obj) {
-    if (engine == 'iojs' && obj.statusCode == 401) {
-      // io.js sends content-length here, Node does not
-      return null;
-    }
+  'content-length': function (val) {
     return val;
   },
 };
@@ -107,17 +103,17 @@ exports.startServers = function () {
   app.use(passport.initialize());
 
   function handleRequest(req, res) {
-    if (req.params.level == 'bottom') {
-      if (req.header('accept') == 'application/json') {
+    if (req.params.level === 'bottom') {
+      if (req.header('accept') === 'application/json') {
         res.json({ key: 'value' });
       } else {
         res.send('Request OK');
       }
       return;
     }
-    const level = req.params.level == 'top' ? 'middle' : 'bottom';
-    if (req.params.proto && req.params.proto != req.protocol) {
-      res.redirect(`${exports.urls[req.params.proto]}/${level}`);
+    const level = req.params.level === 'top' ? 'middle' : 'bottom';
+    if (req.params.proto && req.params.proto !== req.protocol) {
+      res.redirect(`${urls[req.params.proto]}/${level}`);
     } else {
       res.redirect(`/${level}`);
     }
@@ -143,6 +139,6 @@ exports.startServers = function () {
 
 exports.ports = ports;
 exports.requests = requests;
-exports.urls = {};
-exports.debugId = 0;
+exports.urls = urls;
+exports.debugId = debugId;
 exports.enableDebugging = enableDebugging;

@@ -11,7 +11,10 @@
   },
   "rules": {
     "no-underscore-dangle": 0,
-    "no-param-reassign": 0
+    "prefer-destructuring": 0,
+    "no-param-reassign": 0,
+    "func-names": 0,
+    "no-plusplus": 0
   },
   "plugins": ["react", "jsx-a11y", "import"]
 }
