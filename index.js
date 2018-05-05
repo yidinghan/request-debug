@@ -1,18 +1,18 @@
-var clone = require('stringify-clone');
+const clone = (obj) => JSON.parse(JSON.stringify(obj));
 
-var debugId = 0;
+let debugId = 0;
 
-module.exports = exports = function(request, log) {
-  log = log || exports.log;
+const debug = (request, log) => {
+  log = log || console.log;
 
-  var proto;
+  let proto;
   if (request.Request) {
     proto = request.Request.prototype;
   } else if (request.get && request.post) {
     // The object returned by request.defaults() doesn't include the
     // Request property, so do this horrible thing to get at it.  Per
     // Wikipedia, port 4 is unassigned.
-    var req = request('http://localhost:4').on('error', function() {});
+    const req = request('http://localhost:4').on('error', () => {});
     proto = req.constructor.prototype;
   } else {
     throw new Error(
@@ -24,10 +24,10 @@ module.exports = exports = function(request, log) {
     proto._initBeforeDebug = proto.init;
 
     proto.init = function() {
-      if (!this._debugId) {
+      if (!this.debugId) {
         this.on('request', function(req) {
-          var data = {
-            debugId: this._debugId,
+          const data = {
+            debugId: this.debugId,
             uri: this.uri.href,
             method: this.method,
             headers: clone(this.headers),
@@ -46,7 +46,7 @@ module.exports = exports = function(request, log) {
               log(
                 'response',
                 {
-                  debugId: this._debugId,
+                  debugId: this.debugId,
                   headers: clone(res.headers),
                   statusCode: res.statusCode,
                 },
@@ -59,21 +59,23 @@ module.exports = exports = function(request, log) {
               log(
                 'response',
                 {
-                  debugId: this._debugId,
+                  debugId: this.debugId,
                   headers: clone(res.headers),
                   statusCode: res.statusCode,
                   body: res.body,
+                  times: res.times,
+                  timingPhases: res.timingPhases,
                 },
                 this
               );
             }
           })
           .on('redirect', function() {
-            var type = this.response.statusCode == 401 ? 'auth' : 'redirect';
+            const type = this.response.statusCode == 401 ? 'auth' : 'redirect';
             log(
               type,
               {
-                debugId: this._debugId,
+                debugId: this.debugId,
                 statusCode: this.response.statusCode,
                 headers: clone(this.response.headers),
                 uri: this.uri.href,
@@ -82,7 +84,7 @@ module.exports = exports = function(request, log) {
             );
           });
 
-        this._debugId = ++debugId;
+        this.debugId = ++debugId;
       }
 
       return proto._initBeforeDebug.apply(this, arguments);
@@ -97,8 +99,4 @@ module.exports = exports = function(request, log) {
   }
 };
 
-exports.log = function(type, data, r) {
-  var toLog = {};
-  toLog[type] = data;
-  console.error(toLog);
-};
+module.exports = debug;
