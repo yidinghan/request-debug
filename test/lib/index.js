@@ -79,8 +79,8 @@ fixHeader['www-authenticate'] = fixHeader.authorization;
 
 exports.fixVariableHeaders = function () {
   requests.forEach((req) => {
-    for (const type in req) {
-      for (const header in req[type].headers) {
+    Object.keys(req).forEach((type) => {
+      Object.keys(req[type].headers).forEach((header) => {
         if (fixHeader[header]) {
           const fixed = fixHeader[header](req[type].headers[header], req[type]);
           if (fixed === null) {
@@ -89,8 +89,8 @@ exports.fixVariableHeaders = function () {
             req[type].headers[header] = fixed;
           }
         }
-      }
-    }
+      });
+    });
   });
 };
 
