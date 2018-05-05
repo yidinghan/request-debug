@@ -1,144 +1,152 @@
-var engine         = require('detect-engine'),
-  express        = require('express'),
-  fs             = require('fs'),
-  http           = require('http'),
-  https          = require('https'),
-  mocha          = require('mocha'),
-  passport       = require('passport'),
-  DigestStrategy = require('passport-http').DigestStrategy,
-  path           = require('path'),
-  should         = require('should'),
-  util           = require('util')
+var engine = require('detect-engine');
+var express = require('express');
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var mocha = require('mocha');
+var passport = require('passport');
+var DigestStrategy = require('passport-http').DigestStrategy;
+var path = require('path');
+var should = require('should');
+var util = require('util');
 
-var app,
-  ports = {
-    http  : 8480,
-    https : 8443
-  }
+var app;
+var ports = {
+  http: 8480,
+  https: 8443,
+};
 
-exports.ports    = ports
-exports.requests = []
-exports.urls     = {}
-exports.debugId  = 0
+var requests = [];
+exports.ports = ports;
+exports.urls = {};
+exports.debugId = 0;
 
 for (var proto in ports) {
-  exports.urls[proto] = util.format(
-    '%s://localhost:%d',
-    proto,
-    ports[proto])
+  exports.urls[proto] = util.format('%s://localhost:%d', proto, ports[proto]);
 }
 
 exports.enableDebugging = function(request) {
   // enable debugging
   require('../..')(request, function(type, data, r) {
-    var obj = {}
-    obj[type] = data
-    exports.requests.push(obj)
+    var obj = {};
+    obj[type] = data;
+    requests.push(obj);
     if (typeof r._initBeforeDebug != 'function') {
-      throw new Error('Expected a Request instance here.')
+      throw new Error('Expected a Request instance here.');
     }
-  })
-}
+  });
+};
 
 exports.clearRequests = function() {
-  exports.requests = []
-  exports.debugId++
-}
+  requests = [];
+  exports.debugId++;
+};
 
 var fixHeader = {
-  date : function(val) {
-    return '<date>'
+  date: function(val) {
+    return '<date>';
   },
-  etag : function(val) {
-    return val.split('"')[0] + '"<etag>"'
+  etag: function(val) {
+    return val.split('"')[0] + '"<etag>"';
   },
-  connection : function(val) {
-    return val.replace(/^(close|keep-alive)$/, '<close or keep-alive>')
+  connection: function(val) {
+    return val.replace(/^(close|keep-alive)$/, '<close or keep-alive>');
   },
-  authorization : function(val) {
-    var arr = val.split(', ')
+  authorization: function(val) {
+    var arr = val.split(', ');
     if (arr.length > 1) {
       val = util.format(
         '%s <+%s>',
         arr[0],
-        arr.slice(1).map(function(v) {
-          return v.split('=')[0]
-        }).join(','))
+        arr
+          .slice(1)
+          .map(function(v) {
+            return v.split('=')[0];
+          })
+          .join(',')
+      );
     }
-    return val
+    return val;
   },
-  referer : function(val) {
-    return null
+  referer: function(val) {
+    return null;
   },
-  'content-type' : function(val) {
-    return val.replace(/^application\/x-www-form-urlencoded(; charset=utf-8)?$/, '<application/x-www-form-urlencoded>')
+  'content-type': function(val) {
+    return val.replace(
+      /^application\/x-www-form-urlencoded(; charset=utf-8)?$/,
+      '<application/x-www-form-urlencoded>'
+    );
   },
-  'content-length' : function(val, obj) {
+  'content-length': function(val, obj) {
     if (engine == 'iojs' && obj.statusCode == 401) {
       // io.js sends content-length here, Node does not
-      return null
+      return null;
     } else {
-      return val
+      return val;
     }
-  }
-}
-fixHeader['www-authenticate'] = fixHeader.authorization
+  },
+};
+fixHeader['www-authenticate'] = fixHeader.authorization;
 
 exports.fixVariableHeaders = function() {
-  exports.requests.forEach(function(req) {
+  requests.forEach(function(req) {
     for (var type in req) {
       for (var header in req[type].headers) {
         if (fixHeader[header]) {
-          var fixed = fixHeader[header](req[type].headers[header], req[type])
+          var fixed = fixHeader[header](req[type].headers[header], req[type]);
           if (fixed === null) {
-            delete req[type].headers[header]
+            delete req[type].headers[header];
           } else {
-            req[type].headers[header] = fixed
+            req[type].headers[header] = fixed;
           }
         }
       }
     }
-  })
-}
+  });
+};
 
 exports.startServers = function() {
-  passport.use(new DigestStrategy(
-    { qop : 'auth' },
-    function(user, done) {
-      return done(null, 'admin', 'mypass')
-    }
-  ))
+  passport.use(
+    new DigestStrategy({ qop: 'auth' }, function(user, done) {
+      return done(null, 'admin', 'mypass');
+    })
+  );
 
-  app = express()
+  app = express();
 
-  app.use(passport.initialize())
+  app.use(passport.initialize());
 
   function handleRequest(req, res) {
     if (req.params.level == 'bottom') {
       if (req.header('accept') == 'application/json') {
-        res.json({ key : 'value' })
+        res.json({ key: 'value' });
       } else {
-        res.send('Request OK')
+        res.send('Request OK');
       }
-      return
+      return;
     }
-    var level = (req.params.level == 'top' ? 'middle' : 'bottom')
+    var level = req.params.level == 'top' ? 'middle' : 'bottom';
     if (req.params.proto && req.params.proto != req.protocol) {
-      res.redirect(exports.urls[req.params.proto] + '/' + level)
+      res.redirect(exports.urls[req.params.proto] + '/' + level);
     } else {
-      res.redirect('/' + level)
+      res.redirect('/' + level);
     }
   }
 
-  var auth = passport.authenticate('digest', { session : false })
-  app.get('/auth/:level/:proto?', auth, handleRequest)
+  var auth = passport.authenticate('digest', { session: false });
+  app.get('/auth/:level/:proto?', auth, handleRequest);
 
-  app.get('/:level/:proto?', handleRequest)
+  app.get('/:level/:proto?', handleRequest);
 
-  http.createServer(app).listen(ports.http)
+  http.createServer(app).listen(ports.http);
 
-  https.createServer({
-    key  : fs.readFileSync(path.join(__dirname, 'key.pem')),
-    cert : fs.readFileSync(path.join(__dirname, 'cert.pem'))
-  }, app).listen(ports.https)
-}
+  https
+    .createServer(
+      {
+        key: fs.readFileSync(path.join(__dirname, 'key.pem')),
+        cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
+      },
+      app
+    )
+    .listen(ports.https);
+};
